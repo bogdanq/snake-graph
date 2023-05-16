@@ -1,3 +1,17 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#grid {
+  /* border: 1px solid red; */
+}
+
+#snake-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 /* Reset and base styles  */
 * {
   padding: 0px;
