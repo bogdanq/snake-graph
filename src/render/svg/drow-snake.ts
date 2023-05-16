@@ -76,6 +76,7 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
       })
       .transition()
       .duration(DUR)
+      .ease(d3.easeLinear)
       // @ts-ignore
       .attr("x", function ([idx]) {
         return getGlobalPositionByIndex(idx)[0] + CONSTANTS.SNAKE_PADDING / 2;
