@@ -4,7 +4,7 @@ export const CONSTANTS = {
   CELL_SIZE: 25,
   SNAKE_PADDING: 2,
   START_FOOD_COUNT: 100,
-  FPS: 9,
+  FPS: 8,
   SNAKE_LENGT: 30,
   FUNNEL_LENGT: 3,
 
