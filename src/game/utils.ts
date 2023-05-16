@@ -1,9 +1,9 @@
+import Color from "color";
+import random from "lodash-es/random";
 import { CONSTANTS } from "../constants";
 import { Snake } from "../game";
-import { getPositionByIndex } from "../graph";
-import { shakeHead } from "../snake-helpers";
+import { getPositionByIndex, randomId } from "../graph";
 import { Coords, DIRECTIONS } from "../types";
-
 /**
  * Получение следующей позиции (по графу)
  * @param snake - обьект змеи
@@ -57,3 +57,140 @@ export function checkBounds([x, y]: Coords): Coords {
 
   return [x, y];
 }
+
+const colorsStub = [
+  "#f48fb1",
+  "#ec407a",
+  "#c2185b",
+  "#b71c1c",
+  "#ba68c8",
+  "#8e24aa",
+  "#26c6da",
+  "#9ccc65",
+  "#c0ca33",
+  "#ffeb3b",
+  "#ffc107",
+  "#ff9800",
+  "#ff5722",
+  "#795548",
+  "#9e9e9e",
+  "#607d8b",
+];
+
+/**
+ * Получение головы змеи (конец массива)
+ */
+export const shakeHead = (snake: Snake): [number, string] | [null] => {
+  if (!snake) return [null];
+
+  return snake.body[snake.body.length - 1] || [];
+};
+
+/**
+ * Получение хвоста змеи (первый елемент)
+ */
+export const shakeTail = (snake: Snake) => {
+  return snake.body[0];
+};
+
+/**
+ * Смена направления змеи
+ */
+export const handleSetDirection = (
+  snake: Snake,
+  direction: DIRECTIONS
+): Snake => {
+  return { ...snake, direction };
+};
+
+/**
+ * Получение еды (когда голова на ее вершине)
+ */
+export const handleEatFood = (snake: Snake, foodId: number): Snake => {
+  return {
+    ...snake,
+    body: [...snake.body, [foodId, randomId()]],
+  };
+};
+
+/**
+ * Событие поломки змеи
+ */
+export const handleCrashed = (snake: Snake): Snake => {
+  return {
+    ...snake,
+    isCrash: true,
+    body: [],
+  };
+};
+
+/**
+ * Смена позиции змеи
+ */
+export const handleSetPosition = (snake: Snake, position: number): Snake => {
+  return {
+    ...snake,
+    body: [...snake.body.slice(1), [position, randomId()]],
+  };
+};
+
+/**
+ * Получение головы - возвращая тело без головы
+ */
+export const excludeSnakeHead = ([snake, tail]:
+  | [Snake]
+  | [Snake, Snake["body"][0]]
+  | [Snake, Snake["body"][0], Snake["body"][0] | undefined]):
+  | [Snake, Snake["body"][0]]
+  | [Snake, Snake["body"][0] | undefined, Snake["body"][0] | undefined] => {
+  const head = shakeHead(snake);
+
+  if (!head[0]) {
+    return [snake, undefined, undefined];
+  }
+
+  return [
+    { ...snake, body: snake.body.slice(0, snake.body.length - 1) },
+    head,
+    tail,
+  ];
+};
+
+/**
+ * Получение хвоста - возвращая тело без хвоста
+ */
+export const excludeSnakeTail = ([snake, head]:
+  | [Snake]
+  | [Snake, Snake["body"][0]]
+  | [Snake, Snake["body"][0], Snake["body"][0] | undefined]):
+  | [Snake, Snake["body"][0]]
+  | [Snake, Snake["body"][0], Snake["body"][0] | undefined] => {
+  const tail = snake.body[0];
+
+  return [{ ...snake, body: snake.body.slice(1) }, tail, head];
+};
+
+/**
+ * Генерация цвета змеи
+ */
+export function getColorsForSnake(ai = true) {
+  const color = Color(colorsStub[ai ? random(0, colorsStub.length - 1) : 1]);
+
+  return {
+    head: color.toString(),
+    crashed: color.alpha(0.3).toString(),
+    processed: color.alpha(0.6).toString(),
+    tail: color.alpha(0.5).toString(),
+  };
+}
+
+/**
+ * Генерация цвета туннеля (обводка при прближении)
+ */
+export const getFunnelColor = (index: number) => {
+  return Color.rgb({
+    r: 29,
+    g: 196 + index * 180,
+    b: 69 + index * 180,
+  }).fade(0.5);
+};

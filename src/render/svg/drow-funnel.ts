@@ -4,8 +4,7 @@ import { CONSTANTS } from "../../constants";
 import funnelIcon from "../../assets/hole3.jpg";
 // @ts-ignore
 import funnelInIcon from "../../assets/hole-in.png";
-import { getFunnelColor } from "../../snake-helpers";
-import { Funnel, LoopStore } from "../../game";
+import { Funnel, LoopStore, getFunnelColor } from "../../game";
 import { StoreValue } from "effector";
 import { getGlobalPositionByIndex, graphController } from "../../graph";
 

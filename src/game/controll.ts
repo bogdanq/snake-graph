@@ -1,10 +1,9 @@
 import { CONSTANTS } from "../constants";
 import { eventControl } from "../controll";
 import { geIndexByPosition } from "../graph";
-import { shakeHead } from "../snake-helpers";
 import { DIRECTIONS, KEYS } from "../types";
 import { Snake } from "./type";
-import { checkBounds, getNextPositionByDirection } from "./utils";
+import { checkBounds, getNextPositionByDirection, shakeHead } from "./utils";
 
 export function keyboradFactory(): {
   checkDirection: (arg0: number[]) => boolean;

@@ -1,8 +1,7 @@
 import * as d3 from "d3";
 import { StoreValue } from "effector";
 import { CONSTANTS } from "../../constants";
-import { LoopStore, Snake } from "../../game";
-import { excludeSnakeHead, shakeHead } from "../../snake-helpers";
+import { LoopStore, Snake, excludeSnakeHead, shakeHead } from "../../game";
 import { drowFunnelStroke } from "./drow-funnel";
 import { getGlobalPositionByIndex } from "../../graph";
 

@@ -16,12 +16,12 @@ import {
   graphController,
   randomId,
 } from "../../graph";
-import { getColorsForSnake } from "../../snake-helpers";
 import {
   generateRandomFoodByCount,
   generateRandomFunnelByCount,
 } from "../../render";
 import { Food, Funnel, Snake } from "../type";
+import { getColorsForSnake } from "../utils";
 
 export const $fps = createStore(CONSTANTS.FPS);
 

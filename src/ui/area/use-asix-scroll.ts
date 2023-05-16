@@ -1,8 +1,7 @@
 import { useStore } from "effector-react";
 import { useEffect, useRef } from "react";
 import { useReactFlow } from "reactflow";
-import { $currentSnake } from "../../game";
-import { shakeHead } from "../../snake-helpers";
+import { $currentSnake, shakeHead } from "../../game";
 import { getGlobalPositionByIndex } from "../../graph";
 
 export const useAsixScroll = () => {
