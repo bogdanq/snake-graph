@@ -10,18 +10,18 @@ import {
 import { CONSTANTS } from "../../constants";
 import { DIRECTIONS } from "../../types";
 import { keyboardControl } from "../controll";
-import {
-  Graph,
-  geIndexByPosition,
-  graphController,
-  randomId,
-} from "../../graph";
+import { Graph, graphController, randomId } from "../../graph";
 import {
   generateRandomFoodByCount,
   generateRandomFunnelByCount,
 } from "../../render";
 import { Food, Funnel, Snake } from "../type";
 import { getColorsForSnake } from "../utils";
+import {
+  markFoodOnGraph,
+  markFunnelOnGraph,
+  markSnakeOnGraph,
+} from "../../graph/update-graph";
 
 export const $fps = createStore(CONSTANTS.FPS);
 
@@ -100,35 +100,9 @@ const updateGraphFx: Effect<Entities, Graph> = attach({
   effect: (gr, entities: Entities) => {
     const graph = graphController.extend(gr);
 
-    entities.snakes.forEach((snake) => {
-      graph.updateVertex(
-        snake.body.map(([index]) => {
-          return {
-            type: "SNAKE",
-            value: snake.id,
-            index,
-          };
-        })
-      );
-    });
-
-    graph.updateVertex(
-      entities.food.map(([position, id]) => {
-        return {
-          type: "FOOD",
-          value: id,
-          index: geIndexByPosition(position),
-        };
-      })
-    );
-
-    graph.updateVertex(
-      entities.funnel.map((funnel) => ({
-        type: "FUNNEL",
-        value: "funnel-id",
-        index: funnel,
-      }))
-    );
+    markSnakeOnGraph(entities.snakes);
+    markFunnelOnGraph(entities.funnel);
+    markFoodOnGraph(entities.food);
 
     return graph;
   },

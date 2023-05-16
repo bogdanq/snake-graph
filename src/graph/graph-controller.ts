@@ -50,38 +50,7 @@ export class Graph {
     return this.graph[index];
   }
 
-  updateVertex(
-    values:
-      | Array<{
-          index: number;
-          type: "FOOD" | "SNAKE" | "EMPTY";
-          value?: string;
-        }>
-      | Array<{ index: [number, number]; type: "FUNNEL"; value: string }>
-  ) {
-    values.forEach(({ type, index, value }) => {
-      switch (type) {
-        case "FOOD":
-          return this.setValueByIndex(index, { type: "FOOD", id: value });
-        case "SNAKE":
-          return this.setValueByIndex(index, { type: "SNAKE", id: value });
-        case "FUNNEL":
-          this.setValueByIndex(index[0], {
-            type: "FUNNEL",
-            id: value,
-            siblings: [index[1]],
-          });
-          this.setValueByIndex(index[1], {
-            type: "FUNNEL_OUT",
-            id: value,
-          });
-          return;
-        default:
-          return this.setValueByIndex(index, { type: "DEFAULT" });
-      }
-    });
-  }
-
+  // TODO сделать type
   setValueByIndex(index: number, value: Vertex) {
     if (this.graph[index]) {
       this.graph[index] = {

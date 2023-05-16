@@ -27,12 +27,12 @@ import { Area } from "./ui";
 import {
   geIndexByPosition,
   getPositionByIndex,
-  graphController,
   randomId,
   randomPosition,
 } from "./graph";
 
 import "./global.css";
+import { markEmptyCellOnGraph } from "./graph/update-graph";
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
@@ -114,13 +114,7 @@ const main = () => {
               break;
           }
 
-          graphController.updateVertex([
-            {
-              type: "EMPTY",
-              value: snake.id,
-              index: snake.body[0][0],
-            },
-          ]);
+          markEmptyCellOnGraph([[snake.body[0][0], snake.id]]);
 
           nextSnakes.push(nextSnake);
         });
