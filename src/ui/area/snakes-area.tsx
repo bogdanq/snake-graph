@@ -16,7 +16,7 @@ export const SnakesArea = () => {
     svgRender.drowGrid();
   }, []);
 
-  // useAsixScroll();
+  useAsixScroll();
 
   return (
     <Wrapper id="snakes-area">

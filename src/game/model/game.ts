@@ -61,9 +61,14 @@ export const $snakes = createStore<Snake[]>([
     colors: getColorsForSnake(false),
     isAi: false,
   },
-  {
+  //@ts-ignore
+  ...Array.from({ length: 15 }).map((_, i) => ({
     direction: DIRECTIONS.DOWN,
-    body: Array.from({ length: 10 }).map((_, i) => [i + 30, randomId()]),
+    body: Array.from({ length: 10 }).map((_, i) => [
+      i + 300 * (i + 1),
+      randomId(),
+    ]),
+    //@ts-ignore
     updater: (p1, p2, p3, p4) => {
       // console.time("getAISnakePosition");
       const res = getAISnakePosition(p1, p2, p3, p4);
@@ -75,7 +80,7 @@ export const $snakes = createStore<Snake[]>([
     id: randomId(),
     colors: getColorsForSnake(),
     isAi: true,
-  },
+  })),
 ]).on(
   updateSnake,
   // TODO игроков удалять, ботов оставлять мертвыми

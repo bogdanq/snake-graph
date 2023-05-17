@@ -33,10 +33,10 @@ export const Area = () => {
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
-        // selectNodesOnDrag={false}
-        // panOnDrag={false}
-        // zoomOnDoubleClick={false}
-        panOnScroll={true}
+        selectNodesOnDrag={false}
+        panOnDrag={false}
+        zoomOnDoubleClick={false}
+        panOnScroll={false}
         maxZoom={1}
         minZoom={1}
       >

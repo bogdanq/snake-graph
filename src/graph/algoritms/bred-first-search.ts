@@ -10,7 +10,7 @@ export function breadthFirstSearch(
   let isWork = true;
 
   const queue = [startIndex];
-  const visited = [startIndex];
+  const visited = new Map([[startIndex, true]]);
   const path: { [key: string]: number } = {};
 
   while (isWork && queue.length > 0) {
@@ -31,9 +31,9 @@ export function breadthFirstSearch(
 
       const vertex = graphController.getVertexByIndex(sibling);
 
-      if (vertex && !visited.includes(sibling) && canVisitedVertex(vertex)) {
+      if (vertex && !visited.has(sibling) && canVisitedVertex(vertex)) {
         queue.push(sibling);
-        visited.push(sibling);
+        visited.set(sibling, true);
         path[sibling] = currentIndex;
       }
 

@@ -121,10 +121,9 @@ export const getAISnakePosition = (
   const head = shakeHead(snake);
 
   if (algorithm && head[0] && !!targetIndex) {
-    console.log(graph);
-    console.time("s");
+    // console.time("s");
     path = algorithm(head[0], targetIndex, graph);
-    console.timeEnd("s");
+    // console.timeEnd("s");
   }
 
   // удалить старый путь
