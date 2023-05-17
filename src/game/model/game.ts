@@ -9,13 +9,18 @@ import {
 } from "effector";
 import { CONSTANTS } from "../../constants";
 import { DIRECTIONS } from "../../types";
-import { keyboardControl } from "../controll";
-import { Graph, graphController, randomId } from "../../graph";
+import { getAISnakePosition, keyboardControl } from "../controll";
+import {
+  Graph,
+  breadthFirstSearch,
+  graphController,
+  randomId,
+} from "../../graph";
 import {
   generateRandomFoodByCount,
   generateRandomFunnelByCount,
 } from "../../render";
-import { Food, Funnel, Snake } from "../type";
+import { ComputedSnake, Food, Funnel, Snake } from "../type";
 import { getColorsForSnake } from "../utils";
 import {
   markFoodOnGraph,
@@ -26,6 +31,20 @@ import {
 export const $fps = createStore(CONSTANTS.FPS);
 
 export const updateSnake = createEvent<Snake[]>();
+
+export const $algoritms = createStore<
+  Array<{
+    id: string;
+    alg: typeof breadthFirstSearch;
+    name: string;
+  }>
+>([
+  {
+    id: "breadth",
+    alg: breadthFirstSearch,
+    name: "Breadth first search",
+  },
+]);
 
 export const $snakes = createStore<Snake[]>([
   {
@@ -42,21 +61,21 @@ export const $snakes = createStore<Snake[]>([
     colors: getColorsForSnake(false),
     isAi: false,
   },
-  // {
-  //   direction: DIRECTIONS.DOWN,
-  //   body: Array.from({ length: 10 }).map((_, i) => [i + 30, randomId()]),
-  //   // path: [2, 13, 24, 35, 46, 47, 48, 49, 38, 27, 16, 15], // to left
-  //   // path: [2, 13, 24, 35, 46, 47, 48, 49, 38, 27], // to top
-  //   path: [31], // to bott
-  //   // path: [2, 89, 78, 67, 68], // to right
-  //   updater: (snake: Snake) => {
-  //     return getAISnakePosition(snake);
-  //   },
-  //   isCrash: false,
-  //   id: randomId(),
-  //   colors: getColorsForSnake(),
-  //   isAi: true
-  // }
+  {
+    direction: DIRECTIONS.DOWN,
+    body: Array.from({ length: 10 }).map((_, i) => [i + 30, randomId()]),
+    updater: (p1, p2, p3, p4) => {
+      // console.time("getAISnakePosition");
+      const res = getAISnakePosition(p1, p2, p3, p4);
+      // console.timeEnd("getAISnakePosition");
+
+      return res;
+    },
+    isCrash: false,
+    id: randomId(),
+    colors: getColorsForSnake(),
+    isAi: true,
+  },
 ]).on(
   updateSnake,
   // TODO игроков удалять, ботов оставлять мертвыми
@@ -68,6 +87,16 @@ export const $snakes = createStore<Snake[]>([
       return nextSnake ? nextSnake : s;
     })
 );
+
+export const $computedSnakes = $snakes.map<ComputedSnake[]>((snakes) => {
+  return snakes.map((snake) => {
+    if (snake.isAi) {
+      return { snake, algorithm: breadthFirstSearch };
+    }
+
+    return { snake };
+  });
+});
 
 export const updateFood = createEvent<Food[]>();
 

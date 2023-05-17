@@ -37,6 +37,8 @@ export class Graph {
 
     for (let index = 0; index < this.cellCount; index++) {
       this.graph[index] = {
+        id: "0",
+        type: "EMPTY",
         siblings: this.getSiblings(index),
       };
     }

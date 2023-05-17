@@ -1,5 +1,6 @@
 import { CONSTANTS } from "../constants";
 import { Coords } from "../types";
+import { VertexType } from "./type";
 
 /**
  * Получение координат вершин относительно страницы
@@ -94,4 +95,37 @@ export function randomPosition(): Coords {
  */
 export function randomId(): string {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
+}
+
+/**
+ * функция для проверки возможности посещения вершины графа
+ */
+export const canVisitedVertex = (vertex: { type: VertexType }) => {
+  if (vertex.type !== "SNAKE") {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * функция возвращает путь по обьекту истории
+ * в обьект записывается вершина текущая и вершина из которой в нее зашли
+ *
+ * {current: parent}
+ */
+export function restorePath(
+  endIndex: number,
+  startIndex: number,
+  historyPath: { [key: string]: number }
+) {
+  const path = [];
+  let lastStep = endIndex;
+
+  while (lastStep && lastStep !== startIndex) {
+    path.unshift(historyPath[lastStep]);
+    lastStep = historyPath[lastStep];
+  }
+
+  return path;
 }

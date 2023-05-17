@@ -5,10 +5,10 @@ import { useEffect } from "react";
 import { combine, StoreValue } from "effector";
 import { createTick } from "./loop";
 import {
+  $computedSnakes,
   $food,
   $funnel,
   $graph,
-  $snakes,
   Food,
   Snake,
   updateFood,
@@ -38,7 +38,7 @@ const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
 
 const $state = combine({
-  snakes: $snakes,
+  snakes: $computedSnakes,
   food: $food,
   graph: $graph,
   funnel: $funnel,
@@ -73,11 +73,20 @@ const main = () => {
       };
 
       nextState.state.snakes
-        .filter((snake: Snake) => !snake.isCrash)
-        .forEach((snake: Snake) => {
-          const { nextDirection, nextPosition } = snake.updater(snake);
+        .filter(({ snake }) => !snake.isCrash)
+        .forEach(({ snake, algorithm }) => {
+          const { nextDirection, nextPosition, path } = snake.updater(
+            snake,
+            nextState.state.food,
+            nextState.state.graph.graph,
+            algorithm
+          );
 
           let nextSnake = snake;
+
+          if (path) {
+            snake.path = path;
+          }
 
           const nextVertex = nextState.state.graph.graph[nextPosition];
           const type = nextVertex && nextVertex.type;

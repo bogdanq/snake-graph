@@ -46,8 +46,37 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
     return svgHead;
   };
 
-  snakes.forEach((snake) => {
-    const { id, colors } = snake;
+  const renderPath = (path: number[]) => {
+    const svg = d3
+      .select("#snake-container")
+      .selectAll<SVGSVGElement, number[]>("rect#snake-path")
+      .data(path, (idx) => {
+        return String(idx);
+      })
+      .style("fill", "red");
+
+    svg.exit().remove();
+
+    svg
+      .enter()
+      .append("rect")
+      .attr("id", "snake-path")
+      .attr("width", w)
+      .attr("height", h)
+      .attr("x", function (index) {
+        return getGlobalPositionByIndex(index)[0] + CONSTANTS.SNAKE_PADDING / 2;
+      })
+      .attr("y", function (index) {
+        return getGlobalPositionByIndex(index)[1] + CONSTANTS.SNAKE_PADDING / 2;
+      })
+      .attr("rx", 4)
+      .attr("ry", 4);
+
+    return svg;
+  };
+
+  snakes.forEach(({ snake }) => {
+    const { id, colors, path } = snake;
 
     const [nextSnake, head] = excludeSnakeHead([snake]);
 
@@ -92,5 +121,9 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
       .style("fill", () => {
         return colors.processed;
       });
+
+    if (path) {
+      renderPath(path);
+    }
   });
 };

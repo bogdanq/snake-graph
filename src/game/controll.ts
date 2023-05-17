@@ -1,8 +1,9 @@
+import random from "lodash-es/random";
 import { CONSTANTS } from "../constants";
 import { eventControl } from "../controll";
-import { geIndexByPosition } from "../graph";
+import { GraphType, geIndexByPosition } from "../graph";
 import { DIRECTIONS, KEYS } from "../types";
-import { Snake } from "./type";
+import { AlgoritmType, Food, Snake } from "./type";
 import { checkBounds, getNextPositionByDirection, shakeHead } from "./utils";
 
 export function keyboradFactory(): {
@@ -93,18 +94,44 @@ const getDirectionByPosition = (position: number, nextPosition: number) => {
   if (nextPosition === position + horizontalCount) {
     return DIRECTIONS.DOWN;
   }
+
+  return DIRECTIONS.RIGHT;
 };
 
-export const getAISnakePosition = (snake: Snake) => {
-  let { direction, path } = snake;
+let targetIndex = 0;
+export const getAISnakePosition = (
+  snake: Snake,
+  foods: Food[],
+  graph: GraphType,
+  algorithm?: AlgoritmType
+) => {
+  let { direction } = snake;
+
+  let path: Array<number> = [];
+
+  if (graph[targetIndex].type !== "FOOD") {
+    targetIndex = 0;
+  }
+
+  if (!targetIndex) {
+    // TODO рандом переделать на евристику
+    targetIndex = geIndexByPosition(foods[random(0, foods.length)][0]);
+  }
 
   const head = shakeHead(snake);
+
+  if (algorithm && head[0] && !!targetIndex) {
+    console.log(graph);
+    console.time("s");
+    path = algorithm(head[0], targetIndex, graph);
+    console.timeEnd("s");
+  }
 
   // удалить старый путь
   path?.shift();
 
   const nextPosition = path?.length
-    ? path?.[path?.findIndex((p) => p === head[0]) + 1]
+    ? path[0]
     : geIndexByPosition(
         checkBounds(getNextPositionByDirection(snake, direction))
       );
@@ -114,5 +141,6 @@ export const getAISnakePosition = (snake: Snake) => {
   return {
     nextPosition,
     nextDirection: path?.length ? nextDir! : direction,
+    path,
   };
 };
