@@ -30,7 +30,7 @@ import {
 
 export const $fps = createStore(CONSTANTS.FPS);
 
-export const updateSnake = createEvent<Snake[]>();
+export const updateStores = createEvent<{ snakes: Snake[]; foods: Food[] }>();
 
 export const $algoritms = createStore<
   Array<{
@@ -45,7 +45,7 @@ export const $algoritms = createStore<
     name: "Breadth first search",
   },
 ]);
-
+//@ts-ignore
 export const $snakes = createStore<Snake[]>([
   {
     direction: DIRECTIONS.DOWN,
@@ -61,31 +61,23 @@ export const $snakes = createStore<Snake[]>([
     colors: getColorsForSnake(false),
     isAi: false,
   },
-  //@ts-ignore
-  ...Array.from({ length: 15 }).map((_, i) => ({
+  ...(Array.from<Snake[]>({ length: 8 }).map((_, snakeId) => ({
     direction: DIRECTIONS.DOWN,
     body: Array.from({ length: 10 }).map((_, i) => [
-      i + 300 * (i + 1),
+      i + 10 * snakeId,
       randomId(),
     ]),
-    //@ts-ignore
-    updater: (p1, p2, p3, p4) => {
-      // console.time("getAISnakePosition");
-      const res = getAISnakePosition(p1, p2, p3, p4);
-      // console.timeEnd("getAISnakePosition");
-
-      return res;
-    },
+    updater: getAISnakePosition,
     isCrash: false,
     id: randomId(),
     colors: getColorsForSnake(),
     isAi: true,
-  })),
+  })) as any),
 ]).on(
-  updateSnake,
+  updateStores,
   // TODO игроков удалять, ботов оставлять мертвыми
   // (state, snakes) => snakes
-  (state, snakes) =>
+  (state, { snakes }) =>
     state.map((s) => {
       const nextSnake = snakes.find((snake) => snake.id === s.id);
 
@@ -103,14 +95,11 @@ export const $computedSnakes = $snakes.map<ComputedSnake[]>((snakes) => {
   });
 });
 
-export const updateFood = createEvent<Food[]>();
-
 export const $food = createStore<Food[]>(
   generateRandomFoodByCount(CONSTANTS.START_FOOD_COUNT)
-).on(updateFood, (prev, next) => {
-  return next;
+).on(updateStores, (prev, { foods }) => {
+  return foods;
 });
-
 export const $currentSnake = $snakes.map(
   (snakes) => snakes.find((snake) => !snake.isAi) as Snake
 );
@@ -134,9 +123,9 @@ const updateGraphFx: Effect<Entities, Graph> = attach({
   effect: (gr, entities: Entities) => {
     const graph = graphController.extend(gr);
 
-    markSnakeOnGraph(entities.snakes);
-    markFunnelOnGraph(entities.funnel);
     markFoodOnGraph(entities.food);
+    markFunnelOnGraph(entities.funnel);
+    markSnakeOnGraph(entities.snakes);
 
     return graph;
   },

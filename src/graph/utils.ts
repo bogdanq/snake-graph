@@ -19,7 +19,7 @@ export function getLocalSize(x: number, y: number) {
  * @param {number} index - порядковый номер вершины графа
  */
 export function getPositionByIndex(index: number | null): Coords {
-  if (!index) {
+  if (index === undefined || index === null) {
     return [0, 0];
   }
 
@@ -119,7 +119,7 @@ export function restorePath(
   startIndex: number,
   historyPath: { [key: string]: number }
 ) {
-  const path = [];
+  const path = [endIndex];
   let lastStep = endIndex;
 
   while (lastStep && lastStep !== startIndex) {
@@ -127,5 +127,5 @@ export function restorePath(
     lastStep = historyPath[lastStep];
   }
 
-  return path;
+  return path.filter((i) => i !== startIndex);
 }

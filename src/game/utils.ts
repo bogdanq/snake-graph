@@ -80,8 +80,8 @@ const colorsStub = [
 /**
  * Получение головы змеи (конец массива)
  */
-export const shakeHead = (snake: Snake): [number, string] | [null] => {
-  if (!snake) return [null];
+export const shakeHead = (snake: Snake): [number, string] => {
+  if (!snake) return [0, ""];
 
   return snake.body[snake.body.length - 1] || [];
 };
@@ -121,6 +121,8 @@ export const handleCrashed = (snake: Snake): Snake => {
     ...snake,
     isCrash: true,
     body: [],
+    path: [],
+    processed: [],
   };
 };
 
@@ -174,13 +176,15 @@ export const excludeSnakeTail = ([snake, head]:
  * Генерация цвета змеи
  */
 export function getColorsForSnake(ai = true) {
-  const color = Color(colorsStub[ai ? random(0, colorsStub.length - 1) : 1]);
+  const color = Color(
+    ai ? colorsStub[random(0, colorsStub.length - 1)] : "#cddc39"
+  );
 
   return {
     head: color.toString(),
     crashed: color.alpha(0.3).toString(),
     processed: color.alpha(0.6).toString(),
-    tail: color.alpha(0.5).toString(),
+    tail: color.alpha(0.25).toString(),
   };
 }
 

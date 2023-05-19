@@ -1,12 +1,11 @@
-import { graphController } from "../graph-controller";
-import { GraphType } from "../type";
+import { Graph, graphController } from "../graph-controller";
 import { canVisitedVertex, restorePath } from "../utils";
 
 export function breadthFirstSearch(
   startIndex: number,
   endIndex: number,
-  graph: GraphType
-): number[] {
+  graph: Graph
+): { path: number[]; processed: number[] } {
   let isWork = true;
 
   const queue = [startIndex];
@@ -21,8 +20,8 @@ export function breadthFirstSearch(
       break;
     }
 
-    for (let i = 0; i < graph[currentIndex].siblings.length; i++) {
-      const sibling = graph[currentIndex].siblings[i];
+    for (let i = 0; i < graph.graph[currentIndex].siblings.length; i++) {
+      const sibling = graph.graph[currentIndex].siblings[i];
 
       if (!sibling) {
         isWork = false;
@@ -44,5 +43,9 @@ export function breadthFirstSearch(
     }
   }
 
-  return restorePath(endIndex, startIndex, path);
+  return {
+    path: restorePath(endIndex, startIndex, path),
+    // @ts-ignore
+    processed: [...visited.keys()],
+  };
 }

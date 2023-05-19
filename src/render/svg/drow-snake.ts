@@ -46,21 +46,65 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
     return svgHead;
   };
 
-  const renderPath = (path: number[]) => {
+  const renderPath = (path: number[], snake: Snake) => {
     const svg = d3
       .select("#snake-container")
-      .selectAll<SVGSVGElement, number[]>("rect#snake-path")
+      .selectAll<SVGSVGElement, number[]>(`line#snake-path-${snake.id}`)
       .data(path, (idx) => {
         return String(idx);
+      });
+
+    svg.exit().remove();
+
+    svg
+      .enter()
+      .append("line")
+      .style("stroke", snake.colors.crashed)
+      .style("stroke-width", 2)
+      .attr("id", `snake-path-${snake.id}`)
+
+      .attr("x1", function (index, idx) {
+        return getGlobalPositionByIndex(index)[0] + CONSTANTS.CELL_SIZE / 2;
       })
-      .style("fill", "red");
+      .attr("y1", function (index, idx) {
+        return getGlobalPositionByIndex(index)[1] + CONSTANTS.CELL_SIZE / 2;
+      })
+      .attr("x2", function (index, idx) {
+        if (path[idx + 1]) {
+          return (
+            getGlobalPositionByIndex(path[idx + 1])[0] + CONSTANTS.CELL_SIZE / 2
+          );
+        }
+
+        return getGlobalPositionByIndex(index)[0] + CONSTANTS.CELL_SIZE / 2;
+      })
+      .attr("y2", function (index, idx) {
+        if (path[idx + 1]) {
+          return (
+            getGlobalPositionByIndex(path[idx + 1])[1] + CONSTANTS.CELL_SIZE / 2
+          );
+        }
+
+        return getGlobalPositionByIndex(index)[1] + CONSTANTS.CELL_SIZE / 2;
+      });
+
+    return svg;
+  };
+
+  const renderProcessed = (processed: number[], snake: Snake) => {
+    const svg = d3
+      .select("#snake-container")
+      .selectAll<SVGSVGElement, number[]>(`rect#snake-processed-${snake.id}`)
+      .data(processed, (idx) => {
+        return String(idx);
+      });
 
     svg.exit().remove();
 
     svg
       .enter()
       .append("rect")
-      .attr("id", "snake-path")
+      .attr("id", `snake-processed-${snake.id}`)
       .attr("width", w)
       .attr("height", h)
       .attr("x", function (index) {
@@ -70,13 +114,14 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
         return getGlobalPositionByIndex(index)[1] + CONSTANTS.SNAKE_PADDING / 2;
       })
       .attr("rx", 4)
-      .attr("ry", 4);
+      .attr("ry", 4)
+      .style("fill", snake.colors.tail);
 
     return svg;
   };
 
   snakes.forEach(({ snake }) => {
-    const { id, colors, path } = snake;
+    const { id, colors, path, processed } = snake;
 
     const [nextSnake, head] = excludeSnakeHead([snake]);
 
@@ -122,8 +167,7 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
         return colors.processed;
       });
 
-    if (path) {
-      renderPath(path);
-    }
+    renderPath(path?.length ? path : [], snake);
+    renderProcessed(processed?.length ? processed : [], snake);
   });
 };

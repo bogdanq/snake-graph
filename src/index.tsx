@@ -9,10 +9,11 @@ import {
   $food,
   $funnel,
   $graph,
+  shakeTail,
   Food,
   Snake,
-  updateFood,
-  updateSnake,
+  shakeHead,
+  updateStores,
 } from "./game";
 import { eventControl } from "./controll";
 import {
@@ -27,12 +28,13 @@ import { Area } from "./ui";
 import {
   geIndexByPosition,
   getPositionByIndex,
+  graphController,
   randomId,
   randomPosition,
 } from "./graph";
 
 import "./global.css";
-import { markEmptyCellOnGraph } from "./graph/update-graph";
+import { markNextSnakeOnGraph } from "./graph/update-graph";
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
@@ -58,6 +60,8 @@ const main = () => {
       let nextSnakes: Array<Snake> = [];
       let nextFood: Array<Food> = nextState.state.food;
 
+      const graph = graphController.extend(nextState.state.graph);
+
       const eatFood = (nextPosition: number, nextSnake: Snake) => {
         nextFood = [
           ...nextState.state.food,
@@ -65,6 +69,10 @@ const main = () => {
         ].filter(([position]) => {
           return geIndexByPosition(position as Coords) !== nextPosition;
         }) as [Coords, string][];
+
+        graph.setValueByIndex(nextPosition, {
+          type: "SNAKE",
+        });
 
         return handleEatFood(
           handleSetPosition(nextSnake, nextPosition),
@@ -75,21 +83,20 @@ const main = () => {
       nextState.state.snakes
         .filter(({ snake }) => !snake.isCrash)
         .forEach(({ snake, algorithm }) => {
-          const { nextDirection, nextPosition, path } = snake.updater(
-            snake,
-            nextState.state.food,
-            nextState.state.graph.graph,
-            algorithm
-          );
+          const { nextDirection, nextPosition, path, processed } =
+            snake.updater(snake, nextState.state.food, graph, algorithm);
 
           let nextSnake = snake;
 
-          if (path) {
+          if (path?.length) {
             snake.path = path;
           }
+          if (processed?.length) {
+            snake.processed = processed;
+          }
 
-          const nextVertex = nextState.state.graph.graph[nextPosition];
-          const type = nextVertex && nextVertex.type;
+          const nextVertex = graph.getVertexByIndex(nextPosition);
+          const type = nextVertex.type;
 
           switch (type) {
             case "FOOD":
@@ -123,13 +130,21 @@ const main = () => {
               break;
           }
 
-          markEmptyCellOnGraph([[snake.body[0][0], snake.id]]);
+          graph.setValueByIndex(shakeTail(snake)[0], {
+            id: shakeTail(snake)[1],
+            type: "EMPTY",
+          });
+          graph.setValueByIndex(shakeHead(nextSnake)[0], {
+            id: shakeHead(nextSnake)[1],
+            type: "SNAKE",
+          });
+
+          // markNextSnakeOnGraph([shakeTail(snake)], shakeHead(nextSnake));
 
           nextSnakes.push(nextSnake);
         });
 
-      updateSnake(nextSnakes);
-      updateFood(nextFood);
+      updateStores({ snakes: nextSnakes, foods: nextFood });
     },
     run: (nextState) => {
       render(nextState);

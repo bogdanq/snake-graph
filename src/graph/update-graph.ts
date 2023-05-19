@@ -46,3 +46,20 @@ export const markEmptyCellOnGraph = (empty: [number, string][]) => {
     });
   });
 };
+
+export const markNextSnakeOnGraph = (
+  empty: [number, string][],
+  head: [number, string]
+) => {
+  empty.forEach(([index, id]) => {
+    graphController.setValueByIndex(index, {
+      type: "EMPTY",
+      id,
+    });
+  });
+
+  graphController.setValueByIndex(head[0], {
+    type: "SNAKE",
+    id: head[1],
+  });
+};

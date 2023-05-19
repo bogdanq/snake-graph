@@ -1,10 +1,10 @@
-import random from "lodash-es/random";
 import { CONSTANTS } from "../constants";
 import { eventControl } from "../controll";
-import { GraphType, geIndexByPosition } from "../graph";
+import { Graph, geIndexByPosition, getPositionByIndex } from "../graph";
 import { DIRECTIONS, KEYS } from "../types";
 import { AlgoritmType, Food, Snake } from "./type";
 import { checkBounds, getNextPositionByDirection, shakeHead } from "./utils";
+import { manhattanDistance } from "./heuristic";
 
 export function keyboradFactory(): {
   checkDirection: (arg0: number[]) => boolean;
@@ -98,42 +98,51 @@ const getDirectionByPosition = (position: number, nextPosition: number) => {
   return DIRECTIONS.RIGHT;
 };
 
-let targetIndex = 0;
 export const getAISnakePosition = (
   snake: Snake,
   foods: Food[],
-  graph: GraphType,
+  graph: Graph,
   algorithm?: AlgoritmType
 ) => {
   let { direction } = snake;
 
   let path: Array<number> = [];
-
-  if (graph[targetIndex].type !== "FOOD") {
-    targetIndex = 0;
-  }
-
-  if (!targetIndex) {
-    // TODO рандом переделать на евристику
-    targetIndex = geIndexByPosition(foods[random(0, foods.length)][0]);
-  }
+  let processed: Array<number> = [];
 
   const head = shakeHead(snake);
+  const position = getPositionByIndex(head[0]);
 
-  if (algorithm && head[0] && !!targetIndex) {
-    // console.time("s");
-    path = algorithm(head[0], targetIndex, graph);
-    // console.timeEnd("s");
+  const nearestFood =
+    [...foods]
+      .filter(
+        ([position]) =>
+          graph.getVertexByIndex(geIndexByPosition(position)).type === "FOOD"
+      )
+      .sort(
+        (a, b) =>
+          manhattanDistance({ p1: a[0], p: position }) -
+          manhattanDistance({ p1: b[0], p: position })
+      )[0] || foods[0];
+
+  // @ts-ignore
+  const targetIndex = geIndexByPosition(nearestFood[0]);
+
+  if (algorithm && targetIndex !== undefined) {
+    const res = algorithm(head[0], targetIndex, graph);
+
+    path = res.path;
+    processed = res.processed;
   }
 
-  // удалить старый путь
-  path?.shift();
+  let nextPosition = 0;
 
-  const nextPosition = path?.length
-    ? path[0]
-    : geIndexByPosition(
-        checkBounds(getNextPositionByDirection(snake, direction))
-      );
+  if (path[0]) {
+    nextPosition = path[0];
+  } else {
+    nextPosition = geIndexByPosition(
+      checkBounds(getNextPositionByDirection(snake, direction))
+    );
+  }
   // @ts-ignore
   const nextDir = getDirectionByPosition(head[0], nextPosition);
 
@@ -141,5 +150,6 @@ export const getAISnakePosition = (
     nextPosition,
     nextDirection: path?.length ? nextDir! : direction,
     path,
+    processed,
   };
 };
