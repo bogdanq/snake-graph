@@ -1,11 +1,12 @@
 import * as d3 from "d3";
 import { CONSTANTS } from "../../constants";
-import { Food } from "../../game";
+import { Food, LoopStore } from "../../game";
 // @ts-ignore
 import foodIcon from "../../assets/food.svg";
 import { getGlobalPositionByCoord } from "../../graph";
+import { StoreValue } from "effector";
 
-export const drowFood = (food: Food[]) => {
+export const drowFood = ({ food }: StoreValue<LoopStore>) => {
   const w = CONSTANTS.CELL_SIZE - CONSTANTS.SNAKE_PADDING;
   const h = CONSTANTS.CELL_SIZE - CONSTANTS.SNAKE_PADDING;
 

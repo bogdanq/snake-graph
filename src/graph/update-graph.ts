@@ -1,4 +1,4 @@
-import { Food, Funnel, Snake } from "../game";
+import { Food, Funnel, Snake, shakeHead, shakeTail } from "../game";
 import { graphController } from "./graph-controller";
 import { geIndexByPosition } from "./utils";
 
@@ -47,19 +47,17 @@ export const markEmptyCellOnGraph = (empty: [number, string][]) => {
   });
 };
 
-export const markNextSnakeOnGraph = (
-  empty: [number, string][],
-  head: [number, string]
-) => {
-  empty.forEach(([index, id]) => {
-    graphController.setValueByIndex(index, {
-      type: "EMPTY",
-      id,
-    });
+export const recreateSnakeOnGraph = (prevSnake: Snake, nextSnake: Snake) => {
+  const tail = shakeTail(prevSnake);
+  const head = shakeHead(prevSnake);
+
+  graphController.setValueByIndex(tail[0], {
+    id: tail[1],
+    type: "EMPTY",
   });
 
   graphController.setValueByIndex(head[0], {
-    type: "SNAKE",
     id: head[1],
+    type: "SNAKE",
   });
 };

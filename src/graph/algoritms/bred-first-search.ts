@@ -1,4 +1,4 @@
-import { Graph, graphController } from "../graph-controller";
+import { Graph } from "../graph-controller";
 import { canVisitedVertex, restorePath } from "../utils";
 
 export function breadthFirstSearch(
@@ -28,7 +28,7 @@ export function breadthFirstSearch(
         break;
       }
 
-      const vertex = graphController.getVertexByIndex(sibling);
+      const vertex = graph.getVertexByIndex(sibling);
 
       if (vertex && !visited.has(sibling) && canVisitedVertex(vertex)) {
         queue.push(sibling);

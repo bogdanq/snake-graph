@@ -183,8 +183,8 @@ export function getColorsForSnake(ai = true) {
   return {
     head: color.toString(),
     crashed: color.alpha(0.3).toString(),
-    processed: color.alpha(0.6).toString(),
-    tail: color.alpha(0.25).toString(),
+    body: color.alpha(0.6).toString(),
+    processed: color.alpha(0.2).toString(),
   };
 }
 

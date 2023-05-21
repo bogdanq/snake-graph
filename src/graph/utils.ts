@@ -47,7 +47,7 @@ export function geIndexByPosition([x, y]: Coords) {
  * @param {number} index - порядковый номер вершины графа
  */
 export function getGlobalPositionByIndex(index: number | null) {
-  if (!index) {
+  if (index === undefined) {
     return [0, 0];
   }
 

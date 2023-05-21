@@ -23,7 +23,7 @@ export class Graph {
   }
 
   extend(graph: Graph) {
-    this.graph = graph.graph;
+    this.graph = { ...graph.graph };
 
     return this;
   }
@@ -113,7 +113,7 @@ export class Graph {
   }
 
   clear() {
-    this.graph = {};
+    this.graph = { ...this.graph };
 
     return this;
   }

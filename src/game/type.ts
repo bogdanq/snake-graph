@@ -15,7 +15,7 @@ export type SnakeColors = {
   head: string;
   crashed: string;
   processed: string;
-  tail: string;
+  body: string;
 };
 
 export type Funnel = [number, number];

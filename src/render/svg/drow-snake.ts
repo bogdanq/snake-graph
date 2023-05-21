@@ -23,7 +23,7 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
           return snake.colors.crashed;
         }
 
-        return snake.colors.processed;
+        return snake.colors.body;
       });
 
     svgHead.exit().remove();
@@ -49,7 +49,7 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
   const renderPath = (path: number[], snake: Snake) => {
     const svg = d3
       .select("#snake-container")
-      .selectAll<SVGSVGElement, number[]>(`line#snake-path-${snake.id}`)
+      .selectAll<SVGSVGElement, number>(`line#snake-path-${snake.id}`)
       .data(path, (idx) => {
         return String(idx);
       });
@@ -59,10 +59,9 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
     svg
       .enter()
       .append("line")
-      .style("stroke", snake.colors.crashed)
+      .style("stroke", snake.colors.head)
       .style("stroke-width", 2)
       .attr("id", `snake-path-${snake.id}`)
-
       .attr("x1", function (index, idx) {
         return getGlobalPositionByIndex(index)[0] + CONSTANTS.CELL_SIZE / 2;
       })
@@ -115,7 +114,7 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
       })
       .attr("rx", 4)
       .attr("ry", 4)
-      .style("fill", snake.colors.tail);
+      .style("fill", snake.colors.processed);
 
     return svg;
   };
@@ -164,10 +163,12 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
       .enter()
       .selectAll(`rect#snake-body-${id}`)
       .style("fill", () => {
-        return colors.processed;
+        return colors.body;
       });
 
-    renderPath(path?.length ? path : [], snake);
-    renderProcessed(processed?.length ? processed : [], snake);
+    if (snake.isAi) {
+      renderPath(path?.length ? path : [], snake);
+      renderProcessed(processed?.length ? processed : [], snake);
+    }
   });
 };
