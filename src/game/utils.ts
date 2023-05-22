@@ -177,14 +177,14 @@ export const excludeSnakeTail = ([snake, head]:
  */
 export function getColorsForSnake(ai = true) {
   const color = Color(
-    ai ? colorsStub[random(0, colorsStub.length - 1)] : "#cddc39"
+    ai ? colorsStub[random(0, colorsStub.length - 1)] : "#2317d9"
   );
 
   return {
     head: color.toString(),
     crashed: color.alpha(0.3).toString(),
     body: color.alpha(0.6).toString(),
-    processed: color.alpha(0.2).toString(),
+    processed: color.alpha(0.1).toString(),
   };
 }
 
