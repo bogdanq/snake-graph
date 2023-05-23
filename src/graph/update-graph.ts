@@ -49,7 +49,7 @@ export const markEmptyCellOnGraph = (empty: [number, string][]) => {
 
 export const recreateSnakeOnGraph = (prevSnake: Snake, nextSnake: Snake) => {
   const tail = shakeTail(prevSnake);
-  const head = shakeHead(prevSnake);
+  const head = shakeHead(nextSnake);
 
   graphController.setValueByIndex(tail[0], {
     id: tail[1],
