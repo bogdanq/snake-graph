@@ -4,4 +4,4 @@
 
 [try it](https://bogdanq.github.io/snake-graph)
 
-<img width="1672" alt="image" src="https://github.com/bogdanq/snake-graph/assets/43848668/be4d618c-e0c4-429b-b479-0aaef4ddd67c">
+<img width="1655" alt="image" src="https://github.com/bogdanq/snake-graph/assets/43848668/4df52f54-338c-4dd8-af5d-3365c802a9a6">
