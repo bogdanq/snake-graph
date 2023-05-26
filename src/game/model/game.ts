@@ -13,8 +13,10 @@ import { getAISnakePosition, keyboardControl } from "../controll";
 import {
   Graph,
   breadthFirstSearch,
+  geIndexByPosition,
   graphController,
   randomId,
+  randomPosition,
 } from "../../graph";
 import {
   generateRandomFoodByCount,
@@ -50,7 +52,7 @@ export const $snakes = createStore<Snake[]>([
   {
     direction: DIRECTIONS.DOWN,
     body: Array.from({ length: CONSTANTS.SNAKE_LENGT }).map((_, i) => [
-      i + 1000,
+      geIndexByPosition(randomPosition()),
       randomId(),
     ]),
     updater: (snake: Snake) => {
@@ -61,10 +63,10 @@ export const $snakes = createStore<Snake[]>([
     colors: getColorsForSnake(false),
     isAi: false,
   },
-  ...(Array.from<Snake[]>({ length: 8 }).map((_, snakeId) => ({
+  ...(Array.from<Snake[]>({ length: CONSTANTS.BOT_START_COUNT }).map((_) => ({
     direction: DIRECTIONS.DOWN,
-    body: Array.from({ length: 10 }).map((_, i) => [
-      i + 10 * snakeId,
+    body: Array.from({ length: 4 }).map((_, i) => [
+      geIndexByPosition(randomPosition()),
       randomId(),
     ]),
     updater: getAISnakePosition,
