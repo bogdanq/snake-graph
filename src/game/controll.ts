@@ -4,11 +4,7 @@ import { Graph, geIndexByPosition, getPositionByIndex } from "../graph";
 import { DIRECTIONS, KEYS } from "../types";
 import { AlgoritmType, Food, Snake } from "./type";
 import { checkBounds, getNextPositionByDirection, shakeHead } from "./utils";
-import {
-  pifagoreDistance,
-  chebyshevDistance,
-  manhattanDistance,
-} from "./heuristic";
+import { chebyshevDistance } from "./heuristic";
 
 export function keyboradFactory(): {
   checkDirection: (arg0: number[]) => boolean;
@@ -124,8 +120,8 @@ export const getAISnakePosition = (
       )
       .sort(
         (a, b) =>
-          chebyshevDistance({ p1: a[0], p: currentPosition }) -
-          chebyshevDistance({ p1: b[0], p: currentPosition })
+          chebyshevDistance(a[0], currentPosition) -
+          chebyshevDistance(b[0], currentPosition)
       )[0] || foods[0];
 
   // @ts-ignore

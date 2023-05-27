@@ -51,5 +51,4 @@ export type ComputedSnake = {
   algorithm?: AlgoritmType;
 };
 
-export type HeuristicProps = { p1: Coords; p: Coords };
 export type HeuristicResul = number;
