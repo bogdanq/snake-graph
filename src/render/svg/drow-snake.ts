@@ -47,47 +47,31 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
   };
 
   const renderPath = (path: number[], snake: Snake) => {
-    const svg = d3
-      .select("#snake-container")
-      .selectAll<SVGSVGElement, number>(`line#snake-path-${snake.id}`)
-      .data(path, (idx) => {
-        return String(idx);
-      });
+    const coordsFromPath = path.map(getGlobalPositionByIndex);
 
-    svg.exit().remove();
+    const svg = d3.select("#snake-container");
 
     svg
-      .enter()
-      .append("line")
+      .selectAll<SVGSVGElement, number>(`path#snake-path-${snake.id}`)
+      .remove();
+
+    svg
+      .append("path")
       .style("stroke", snake.colors.head)
+      .style("fill", "none")
       .style("stroke-width", 2)
       .attr("id", `snake-path-${snake.id}`)
-      .attr("x1", function (index, idx) {
-        return getGlobalPositionByIndex(index)[0] + CONSTANTS.CELL_SIZE / 2;
-      })
-      .attr("y1", function (index, idx) {
-        return getGlobalPositionByIndex(index)[1] + CONSTANTS.CELL_SIZE / 2;
-      })
-      .attr("x2", function (index, idx) {
-        if (path[idx + 1]) {
-          return (
-            getGlobalPositionByIndex(path[idx + 1])[0] + CONSTANTS.CELL_SIZE / 2
-          );
-        }
-
-        return getGlobalPositionByIndex(index)[0] + CONSTANTS.CELL_SIZE / 2;
-      })
-      .attr("y2", function (index, idx) {
-        if (path[idx + 1]) {
-          return (
-            getGlobalPositionByIndex(path[idx + 1])[1] + CONSTANTS.CELL_SIZE / 2
-          );
-        }
-
-        return getGlobalPositionByIndex(index)[1] + CONSTANTS.CELL_SIZE / 2;
-      });
-
-    return svg;
+      .attr(
+        "d",
+        d3
+          .line()
+          .x(function ([x]) {
+            return x + CONSTANTS.CELL_SIZE / 2;
+          })
+          .y(function ([_, y]) {
+            return y + CONSTANTS.CELL_SIZE / 2;
+          })(coordsFromPath)
+      );
   };
 
   const renderProcessed = (processed: number[], snake: Snake) => {
@@ -167,8 +151,14 @@ export const drowSnake = ({ snakes, graph, funnel }: StoreValue<LoopStore>) => {
       });
 
     if (snake.isAi) {
-      renderPath(path?.length ? path : [], snake);
-      renderProcessed(processed?.length ? processed : [], snake);
+      // @ts-ignore
+      renderPath(path?.length && !path?.includes(undefined) ? path : [], snake);
+
+      renderProcessed(
+        // @ts-ignore
+        processed?.length && !path?.includes(undefined) ? processed : [],
+        snake
+      );
     }
   });
 };

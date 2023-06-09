@@ -24,7 +24,7 @@ import {
 } from "./game";
 import { svgRender } from "./render";
 import { Coords } from "./types";
-import { Area } from "./ui";
+import { Area, GameTemplate } from "./ui";
 import {
   geIndexByPosition,
   getPositionByIndex,
@@ -153,6 +153,8 @@ function App() {
 
 root.render(
   <>
-    <App />
+    <GameTemplate>
+      <App />
+    </GameTemplate>
   </>
 );

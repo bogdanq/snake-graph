@@ -46,7 +46,7 @@ export function geIndexByPosition([x, y]: Coords) {
  * Получение координат по осям относительно окна
  * @param {number} index - порядковый номер вершины графа
  */
-export function getGlobalPositionByIndex(index: number | null) {
+export function getGlobalPositionByIndex(index: number | null): Coords {
   if (index === undefined) {
     return [0, 0];
   }

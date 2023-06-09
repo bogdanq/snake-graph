@@ -17,6 +17,8 @@ import {
   graphController,
   randomId,
   randomPosition,
+  depthFirstSearch,
+  astar,
 } from "../../graph";
 import {
   generateRandomFoodByCount,
@@ -43,8 +45,13 @@ export const $algoritms = createStore<
 >([
   {
     id: "breadth",
-    alg: breadthFirstSearch,
+    alg: depthFirstSearch,
     name: "Breadth first search",
+  },
+  {
+    id: "depth",
+    alg: depthFirstSearch,
+    name: "Depth first search",
   },
 ]);
 //@ts-ignore
@@ -90,7 +97,7 @@ export const $snakes = createStore<Snake[]>([
 export const $computedSnakes = $snakes.map<ComputedSnake[]>((snakes) => {
   return snakes.map((snake) => {
     if (snake.isAi) {
-      return { snake, algorithm: breadthFirstSearch };
+      return { snake, algorithm: astar };
     }
 
     return { snake };

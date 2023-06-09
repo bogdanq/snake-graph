@@ -1,6 +1,8 @@
+import { useStore } from "effector-react";
 import { useMemo } from "react";
 import ReactFlow, { useNodesState, Background } from "reactflow";
 import "reactflow/dist/style.css";
+import { $currentSnake } from "../../game";
 
 import { SnakesArea } from "./snakes-area";
 
@@ -16,6 +18,7 @@ const initialNodes = [
 
 export const Area = () => {
   const [nodes] = useNodesState(initialNodes);
+  const { isCrash } = useStore($currentSnake);
 
   const nodeTypes = useMemo(() => {
     return {
@@ -29,18 +32,26 @@ export const Area = () => {
   }, []);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 0,
+      }}
+    >
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
         selectNodesOnDrag={false}
-        panOnDrag={false}
         zoomOnDoubleClick={false}
         panOnScroll={false}
+        zoomOnScroll={true}
         maxZoom={1}
-        minZoom={1}
+        minZoom={isCrash ? 0.3 : 1}
       >
-        {/* <Controls /> */}
         <Background />
       </ReactFlow>
     </div>
