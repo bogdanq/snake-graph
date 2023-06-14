@@ -9,7 +9,7 @@ import {
   combine,
   StoreValue,
 } from "effector";
-import { $fps, LoopStore } from "./game";
+import { $fps, LoopStore, startGame } from "./game";
 
 const tickFx = createEffect<number, void>().use(
   (fps) =>
@@ -43,8 +43,8 @@ export function createTick({
   });
 
   const triggerTick = guard({
-    clock: merge([nextTickFx.done]),
-    filter: () => true,
+    clock: merge([nextTickFx.done, startGame]),
+    filter: $state.map(({ gameStatus }) => gameStatus === "RUNING"),
   });
 
   sample({

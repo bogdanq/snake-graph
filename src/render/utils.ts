@@ -10,7 +10,7 @@ export function generateRandomFoodByCount(count: number): Array<Food> {
   const foods: Array<Food> = [];
 
   for (let i = 0; i < count; i++) {
-    foods.push([randomPosition(), randomId()]);
+    foods.push([randomPosition(), { id: randomId(), type: "DEFAULT" }]);
   }
 
   return foods;

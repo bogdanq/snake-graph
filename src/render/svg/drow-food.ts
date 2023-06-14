@@ -14,7 +14,8 @@ export const drowFood = ({ food }: StoreValue<LoopStore>) => {
     .select("#snake-container")
     .selectAll<SVGSVGElement, Food[]>("image#food")
     .data(food, (food, ids) => {
-      return String(food[1]);
+      // @ts-ignore
+      return String(food[1].id);
     });
 
   svg.exit().remove();

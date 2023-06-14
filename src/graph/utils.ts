@@ -1,22 +1,29 @@
 import { CONSTANTS } from "../constants";
 import { Coords } from "../types";
-import { VertexType } from "./type";
 
 /**
- * Получение координат вершин относительно страницы
- * @param {number} x - позиция по оси X (mouseEvent.clientX)
- * @param {number} y - позиция по оси Y (mouseEvent.clientY)
+ * Получение координат вершин графа
+ * 0 1 2 3 4
+ * 5 6 7 8 9
+ * getLocalSize(1, 1) => [0 , 0]
+ * [0 , 0] - координата вершины 0
+ * @param x - позиция по оси X (mouseEvent.clientX)
+ * @param y - позиция по оси Y (mouseEvent.clientY)
  */
-export function getLocalSize(x: number, y: number) {
-  return {
-    x: Math.floor(x / CONSTANTS.CELL_SIZE),
-    y: Math.floor(y / CONSTANTS.CELL_SIZE),
-  };
+export function getLocalSize(x: number, y: number): Coords {
+  return [
+    Math.floor(x / CONSTANTS.CELL_SIZE),
+    Math.floor(y / CONSTANTS.CELL_SIZE),
+  ];
 }
 
 /**
- * Получение координаты вершины относительно страницы
- * @param {number} index - порядковый номер вершины графа
+ * Получение координат вершин графа по индексу вершины
+ * 0 1 2 3 4
+ * 5 6 7 8 9
+ * getPositionByIndex(1) => [1 , 0]
+ * [1 , 0] - координата вершины 1
+ * @param index - порядковый номер вершины графа
  */
 export function getPositionByIndex(index: number | null): Coords {
   if (index === undefined || index === null) {
@@ -32,9 +39,12 @@ export function getPositionByIndex(index: number | null): Coords {
 }
 
 /**
- * Получение порядкового номера вершины относительно ее позиции координаты
- * @param {number} x - позиция по оси х
- * @param {number} y - позиция по оси y
+ * Получение порядкового номера вершины относительно ее координат
+ * 0 1 2 3 4
+ * 5 6 7 8 9
+ * geIndexByPosition([1, 0]) => 1
+ * @param x - позиция по оси х
+ * @param y - позиция по оси y
  */
 export function geIndexByPosition([x, y]: Coords) {
   const count = CONSTANTS.getHorizontalCellCount();
@@ -43,8 +53,12 @@ export function geIndexByPosition([x, y]: Coords) {
 }
 
 /**
- * Получение координат по осям относительно окна
- * @param {number} index - порядковый номер вершины графа
+ * Получение координат вершины относительно страницы
+ * 0 1 2 3 4
+ * 5 6 7 8 9
+ * getGlobalPositionByIndex(1) => [25, 0]
+ * [25, 0] - координата вершины 1
+ * @param index - порядковый номер вершины графа
  */
 export function getGlobalPositionByIndex(index: number | null): Coords {
   if (index === undefined) {
@@ -57,9 +71,13 @@ export function getGlobalPositionByIndex(index: number | null): Coords {
 }
 
 /**
- * Получение координат по осям относительно окна
- * @param {number} x - позиция по оси х
- * @param {number} y - позиция по оси y
+ * Получение координат вершины относительно страницы
+ * 0 1 2 3 4
+ * 5 6 7 8 9
+ * getGlobalPositionByCoord([1, 0]) => [25, 0]
+ * [25, 0] - координата вершины 1
+ * @param x - позиция вершины по оси х
+ * @param y - позиция вершины по оси y
  */
 export function getGlobalPositionByCoord([x, y]: Coords) {
   return [x * CONSTANTS.CELL_SIZE, y * CONSTANTS.CELL_SIZE];
@@ -71,9 +89,7 @@ export function getGlobalPositionByCoord([x, y]: Coords) {
  * @param {number} e - MouseEvent
  */
 export function getTargetIndex(e: MouseEvent) {
-  const { x, y } = getLocalSize(e.clientX, e.clientY);
-
-  return geIndexByPosition([x, y]);
+  return geIndexByPosition(getLocalSize(e.clientX, e.clientY));
 }
 
 /**
@@ -95,37 +111,4 @@ export function randomPosition(): Coords {
  */
 export function randomId(): string {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
-}
-
-/**
- * функция для проверки возможности посещения вершины графа
- */
-export const canVisitedVertex = (vertex: { type: VertexType }) => {
-  if (vertex.type !== "SNAKE") {
-    return true;
-  }
-
-  return false;
-};
-
-/**
- * функция возвращает путь по обьекту истории
- * в обьект записывается вершина текущая и вершина из которой в нее зашли
- *
- * {current: parent}
- */
-export function restorePath(
-  endIndex: number,
-  startIndex: number,
-  historyPath: { [key: string]: number }
-) {
-  const path = [endIndex];
-  let lastStep = endIndex;
-
-  while (lastStep && lastStep !== startIndex) {
-    path.unshift(historyPath[lastStep]);
-    lastStep = historyPath[lastStep];
-  }
-
-  return path.filter((i) => i !== startIndex);
 }

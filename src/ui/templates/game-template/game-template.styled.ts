@@ -118,5 +118,9 @@ export const FpsWrapper = styled.div`
   height: 100px;
   left: 0;
   top: calc(100% - 80px);
-  border: 1px solid red;
+
+  & div {
+    background-color: #7dbcea75 !important;
+    color: #fff !important;
+  }
 `;

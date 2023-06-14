@@ -1,7 +1,7 @@
 import { Store } from "effector";
 import { Coords, DIRECTIONS } from "../types";
-import { keyboardControl } from "./controll";
-import { Graph } from "../graph";
+import { controll } from "./game-controll";
+import type { Graph } from "../graph";
 
 export type AlgoritmType = (
   startIndex: number,
@@ -9,7 +9,7 @@ export type AlgoritmType = (
   graph: Graph
 ) => { path: number[]; processed: number[] };
 
-export type Food = [Coords, string];
+export type Food = [Coords, { id: string; type: "DEFAULT" | "SNAKE" }];
 
 export type SnakeColors = {
   head: string;
@@ -25,6 +25,7 @@ export type LoopStore = Store<{
   food: Food[];
   graph: Graph;
   funnel: Funnel[];
+  gameStatus: GameStatus;
 }>;
 
 export type Snake = {
@@ -38,7 +39,7 @@ export type Snake = {
     foods: Food[],
     graph: Graph,
     algorithm?: AlgoritmType
-  ) => ReturnType<typeof keyboardControl> & ReturnType<AlgoritmType>;
+  ) => ReturnType<typeof controll.user> & ReturnType<AlgoritmType>;
 
   isCrash: boolean;
   id: string;
@@ -51,4 +52,4 @@ export type ComputedSnake = {
   algorithm?: AlgoritmType;
 };
 
-export type HeuristicResul = number;
+export type GameStatus = "PENDING" | "RUNING" | "FINISHED";

@@ -1,12 +1,9 @@
 import PriorityQueue from "fastpriorityqueue";
-import {
-  pifagoreDistance,
-  manhattanDistance,
-  chebyshevDistance,
-} from "../../game/heuristic";
+import { pifagoreDistance } from "../heuristic";
+import type { Graph } from "../graph-controller";
+import { getPositionByIndex } from "../utils";
 
-import { Graph } from "../graph-controller";
-import { canVisitedVertex, getPositionByIndex, restorePath } from "../utils";
+import { canVisitedVertex, restorePath } from "./utils";
 
 export function astar(
   startIndex: number,

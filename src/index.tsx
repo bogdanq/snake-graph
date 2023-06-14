@@ -8,11 +8,10 @@ import {
   $computedSnakes,
   $food,
   $funnel,
+  $gameStatus,
   $graph,
-  shakeTail,
   Food,
   Snake,
-  shakeHead,
   updateStores,
 } from "./game";
 import { eventControl } from "./controll";
@@ -23,18 +22,19 @@ import {
   handleSetPosition,
 } from "./game";
 import { svgRender } from "./render";
-import { Coords } from "./types";
-import { Area, GameTemplate } from "./ui";
+import { Area, EndGameAlert, GameTemplate } from "./ui";
 import {
   geIndexByPosition,
   getPositionByIndex,
   graphController,
   randomId,
   randomPosition,
+  Vertex,
 } from "./graph";
 
 import "./global.css";
 import { recreateSnakeOnGraph } from "./graph/update-graph";
+import { useStore } from "effector-react";
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
@@ -44,6 +44,7 @@ const $state = combine({
   food: $food,
   graph: $graph,
   funnel: $funnel,
+  gameStatus: $gameStatus,
 });
 
 const main = () => {
@@ -62,11 +63,21 @@ const main = () => {
       const graph = graphController.extend(nextState.state.graph);
 
       const eatFood = (nextPosition: number, nextSnake: Snake) => {
-        const id = randomPosition();
+        food = food
+          .map((item) => {
+            const index = geIndexByPosition(item[0]);
 
-        food = [...food, [id, randomId()]].filter(([position]) => {
-          return geIndexByPosition(position as Coords) !== nextPosition;
-        }) as [Coords, string][];
+            if (index === nextPosition && item[1].type === "DEFAULT") {
+              return [randomPosition(), { id: randomId(), type: "DEFAULT" }];
+            }
+
+            if (index === nextPosition && item[1].type === "SNAKE") {
+              return undefined;
+            }
+
+            return item;
+          })
+          .filter(Boolean) as Food[];
 
         graph.setValueByIndex(nextPosition, {
           id: nextSnake.id,
@@ -98,8 +109,8 @@ const main = () => {
             case "SNAKE":
               const foods = snake.body.map(([position]) => [
                 getPositionByIndex(position),
-                randomId(),
-              ]) as [Coords, string][];
+                { id: randomId(), type: "SNAKE" },
+              ]) as Food[];
 
               food.push(...foods);
 
@@ -143,18 +154,23 @@ const main = () => {
 };
 
 function App() {
+  const status = useStore($gameStatus);
+
   useEffect(() => {
     main();
     eventControl.init();
   }, []);
 
-  return <Area />;
+  return (
+    <>
+      <GameTemplate gameStatus={status}>
+        <>
+          <Area />
+          {status === "FINISHED" && <EndGameAlert />}
+        </>
+      </GameTemplate>
+    </>
+  );
 }
 
-root.render(
-  <>
-    <GameTemplate>
-      <App />
-    </GameTemplate>
-  </>
-);
+root.render(<App />);

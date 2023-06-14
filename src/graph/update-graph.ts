@@ -3,7 +3,7 @@ import { graphController } from "./graph-controller";
 import { geIndexByPosition } from "./utils";
 
 export const markFoodOnGraph = (food: Food[]) => {
-  food.forEach(([position, id]) => {
+  food.forEach(([position, { id }]) => {
     graphController.setValueByIndex(geIndexByPosition(position), {
       type: "FOOD",
       id,

@@ -9,19 +9,28 @@ import {
   CloseOutlined,
   EyeOutlined,
   RobotOutlined,
+  PlayCircleOutlined,
 } from "@ant-design/icons";
 
 import * as S from "./game-template.styled";
 import { useState } from "react";
 import { useStore } from "effector-react";
-import { $snakes } from "../../../game";
+import {
+  $snakes,
+  GameStatus,
+  pauseGame,
+  restartGame,
+  startGame,
+} from "../../../game";
 
 const { Content } = Layout;
 
 export const GameTemplate = ({
   children,
+  gameStatus,
 }: {
   children: React.ReactElement;
+  gameStatus: GameStatus;
 }) => {
   const [isVisible, setVisible] = useState(true);
 
@@ -81,13 +90,28 @@ export const GameTemplate = ({
         <S.Footer isVisible={isVisible}>
           <Row align="middle">
             <Row align="middle">
-              <PauseOutlined />
-              <Typography.Title level={5}>Пауза</Typography.Title>
+              {gameStatus === "RUNING" ? (
+                <>
+                  <PauseOutlined />
+                  <Typography.Title onClick={() => pauseGame()} level={5}>
+                    Пауза
+                  </Typography.Title>
+                </>
+              ) : (
+                <>
+                  <PlayCircleOutlined />
+                  <Typography.Title onClick={() => startGame()} level={5}>
+                    Запустить
+                  </Typography.Title>
+                </>
+              )}
             </Row>
 
             <Row align="middle">
               <RedoOutlined />
-              <Typography.Title level={5}>Рестарт</Typography.Title>
+              <Typography.Title onClick={() => restartGame()} level={5}>
+                Рестарт
+              </Typography.Title>
             </Row>
 
             <Row align="middle">

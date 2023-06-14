@@ -1,5 +1,5 @@
-import { Graph } from "../graph-controller";
-import { canVisitedVertex, restorePath } from "../utils";
+import type { Graph } from "../graph-controller";
+import { canVisitedVertex, restorePath } from "./utils";
 
 export function depthFirstSearch(
   startIndex: number,

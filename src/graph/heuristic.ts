@@ -1,5 +1,4 @@
 import { Coords } from "../types";
-import { HeuristicResul } from "./type";
 
 // https://tproger.ru/translations/3-basic-distances-in-data-science/ геометрию пространства
 
@@ -11,7 +10,7 @@ import { HeuristicResul } from "./type";
  * @param p - позиция головы (по координатам графа)
  * @param p1 - позиция точки еды (по координатам графа)
  */
-export function manhattanDistance(p: Coords, p1: Coords): HeuristicResul {
+export function manhattanDistance(p: Coords, p1: Coords): number {
   return Math.abs(p[0] - p1[0]) + Math.abs(p[1] - p1[1]);
 }
 
@@ -22,7 +21,7 @@ export function manhattanDistance(p: Coords, p1: Coords): HeuristicResul {
  * @param p - позиция головы (по координатам графа)
  * @param p1 - позиция точки еды (по координатам графа)
  */
-export function pifagoreDistance(p: Coords, p1: Coords): HeuristicResul {
+export function pifagoreDistance(p: Coords, p1: Coords): number {
   return Math.sqrt(Math.pow(p[0] - p1[0], 2) + Math.pow(p[1] - p1[1], 2));
 }
 
@@ -34,6 +33,6 @@ export function pifagoreDistance(p: Coords, p1: Coords): HeuristicResul {
  * @param p - позиция головы (по координатам графа)
  * @param p1 - позиция точки еды (по координатам графа)
  */
-export function chebyshevDistance(p: Coords, p1: Coords): HeuristicResul {
+export function chebyshevDistance(p: Coords, p1: Coords): number {
   return Math.max(Math.abs(p[0] - p1[0]), Math.abs(p[1] - p1[1]));
 }

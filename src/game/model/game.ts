@@ -6,10 +6,10 @@ import {
   attach,
   StoreValue,
   Effect,
+  merge,
 } from "effector";
 import { CONSTANTS } from "../../constants";
 import { DIRECTIONS } from "../../types";
-import { getAISnakePosition, keyboardControl } from "../controll";
 import {
   Graph,
   breadthFirstSearch,
@@ -24,17 +24,22 @@ import {
   generateRandomFoodByCount,
   generateRandomFunnelByCount,
 } from "../../render";
-import { ComputedSnake, Food, Funnel, Snake } from "../type";
+import { ComputedSnake, Food, Funnel, GameStatus, Snake } from "../type";
 import { getColorsForSnake } from "../utils";
 import {
   markFoodOnGraph,
   markFunnelOnGraph,
   markSnakeOnGraph,
 } from "../../graph/update-graph";
+import { controll } from "../game-controll";
 
 export const $fps = createStore(CONSTANTS.FPS);
 
 export const updateStores = createEvent<{ snakes: Snake[]; foods: Food[] }>();
+
+export const startGame = createEvent();
+export const pauseGame = createEvent();
+export const restartGame = createEvent();
 
 export const $algoritms = createStore<
   Array<{
@@ -63,7 +68,7 @@ export const $snakes = createStore<Snake[]>([
       randomId(),
     ]),
     updater: (snake: Snake) => {
-      return keyboardControl(snake);
+      return controll.user(snake);
     },
     isCrash: false,
     id: randomId(),
@@ -76,23 +81,15 @@ export const $snakes = createStore<Snake[]>([
       geIndexByPosition(randomPosition()),
       randomId(),
     ]),
-    updater: getAISnakePosition,
+    updater: controll.ai,
     isCrash: false,
     id: randomId(),
     colors: getColorsForSnake(),
     isAi: true,
   })) as any),
-]).on(
-  updateStores,
-  // TODO игроков удалять, ботов оставлять мертвыми
-  // (state, snakes) => snakes
-  (state, { snakes }) =>
-    state.map((s) => {
-      const nextSnake = snakes.find((snake) => snake.id === s.id);
-
-      return nextSnake ? nextSnake : s;
-    })
-);
+])
+  .on(updateStores, (_, nextState) => nextState.snakes)
+  .reset(restartGame);
 
 export const $computedSnakes = $snakes.map<ComputedSnake[]>((snakes) => {
   return snakes.map((snake) => {
@@ -106,9 +103,14 @@ export const $computedSnakes = $snakes.map<ComputedSnake[]>((snakes) => {
 
 export const $food = createStore<Food[]>(
   generateRandomFoodByCount(CONSTANTS.START_FOOD_COUNT)
-).on(updateStores, (prev, { foods }) => {
-  return foods;
-});
+)
+  .on(updateStores, (prev, { foods }) => {
+    return foods;
+  })
+  .reset(restartGame);
+
+$food.watch(console.log);
+
 export const $currentSnake = $snakes.map(
   (snakes) => snakes.find((snake) => !snake.isAi) as Snake
 );
@@ -117,13 +119,19 @@ export const $funnel = createStore<Funnel[]>(
   generateRandomFunnelByCount(CONSTANTS.FUNNEL_LENGT)
 );
 
-export const $graph = createStore(graphController.createGraph());
+export const $graph = createStore(graphController.createGraph()).reset(
+  restartGame
+);
 
 const $entities = combine({
   food: $food,
   snakes: $snakes,
   funnel: $funnel,
 });
+
+export const $gameStatus = createStore<GameStatus>("PENDING")
+  .on(merge([startGame, restartGame]), () => "RUNING")
+  .on(pauseGame, () => "PENDING");
 
 type Entities = StoreValue<typeof $entities>;
 
