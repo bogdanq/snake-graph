@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/snake-graph/static/css/main.5ff9c4c0.css",
-    "main.js": "/snake-graph/static/js/main.ae252819.js",
+    "main.js": "/snake-graph/static/js/main.de0223da.js",
     "static/media/hole-in.png": "/snake-graph/static/media/hole-in.8b24cb2339138c866c0b.png",
     "static/media/food.svg": "/snake-graph/static/media/food.5db5992109a8e5cf23942e666028e082.svg",
     "index.html": "/snake-graph/index.html",
     "main.5ff9c4c0.css.map": "/snake-graph/static/css/main.5ff9c4c0.css.map",
-    "main.ae252819.js.map": "/snake-graph/static/js/main.ae252819.js.map"
+    "main.de0223da.js.map": "/snake-graph/static/js/main.de0223da.js.map"
   },
   "entrypoints": [
     "static/css/main.5ff9c4c0.css",
-    "static/js/main.ae252819.js"
+    "static/js/main.de0223da.js"
   ]
 }
