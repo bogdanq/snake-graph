@@ -2,8 +2,14 @@ import Color from "color";
 import random from "lodash-es/random";
 import { CONSTANTS } from "../constants";
 import { Snake } from "../game";
-import { getPositionByIndex, randomId } from "../graph";
+import {
+  geIndexByPosition,
+  getPositionByIndex,
+  randomId,
+  randomPosition,
+} from "../graph";
 import { Coords, DIRECTIONS } from "../types";
+import { controll } from "./game-controll";
 /**
  * Получение следующей позиции (по графу)
  * @param snake - обьект змеи
@@ -197,4 +203,27 @@ export const getFunnelColor = (index: number) => {
     g: 196 + index * 180,
     b: 69 + index * 180,
   }).fade(0.5);
+};
+
+export const buildSnakes = (snakeCount = 1, isAi = false): Snake[] => {
+  const snakeLength = CONSTANTS.SNAKE_LENGT;
+
+  return Array.from({ length: snakeCount }).map(() => ({
+    direction: DIRECTIONS.DOWN,
+    body: (() => {
+      const tail = geIndexByPosition(randomPosition());
+
+      return Array.from({ length: snakeLength }).map((_, i) => [
+        tail + i,
+        randomId(),
+      ]);
+    })(),
+    updater: isAi ? controll.ai : (snake) => controll.user(snake),
+    isCrash: false,
+    id: randomId(),
+    colors: getColorsForSnake(isAi),
+    isAi,
+    path: [],
+    processed: [],
+  }));
 };

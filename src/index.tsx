@@ -13,6 +13,7 @@ import {
   Food,
   Snake,
   updateStores,
+  $currentSnake,
 } from "./game";
 import { eventControl } from "./controll";
 import {
@@ -22,7 +23,7 @@ import {
   handleSetPosition,
 } from "./game";
 import { svgRender } from "./render";
-import { Area, EndGameAlert, GameTemplate } from "./ui";
+import { Area, EndGameAlert, GameTemplate, StartGameAlert } from "./ui";
 import {
   geIndexByPosition,
   getPositionByIndex,
@@ -155,6 +156,7 @@ const main = () => {
 
 function App() {
   const status = useStore($gameStatus);
+  const snake = useStore($currentSnake);
 
   useEffect(() => {
     main();
@@ -166,7 +168,9 @@ function App() {
       <GameTemplate gameStatus={status}>
         <>
           <Area />
-          {status === "FINISHED" && <EndGameAlert />}
+
+          {snake?.isCrash && <EndGameAlert />}
+          {!snake && <StartGameAlert />}
         </>
       </GameTemplate>
     </>

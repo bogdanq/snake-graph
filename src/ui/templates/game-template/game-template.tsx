@@ -81,7 +81,8 @@ export const GameTemplate = ({
             <Row align="middle">
               <RobotOutlined className="icon" />
               <Typography.Text>
-                Ботов: {snakes.length} - всего, {snakesInGame.length} - в игре
+                Ботов: {snakes?.length || 0} - всего,{" "}
+                {snakesInGame?.length || 0} - в игре
               </Typography.Text>
             </Row>
           </S.Wrapper>

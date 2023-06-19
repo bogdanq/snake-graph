@@ -18,7 +18,7 @@ const initialNodes = [
 
 export const Area = () => {
   const [nodes] = useNodesState(initialNodes);
-  const { isCrash } = useStore($currentSnake);
+  const snake = useStore($currentSnake);
 
   const nodeTypes = useMemo(() => {
     return {
@@ -50,7 +50,7 @@ export const Area = () => {
         panOnScroll={false}
         zoomOnScroll={true}
         maxZoom={1}
-        minZoom={isCrash ? 0.3 : 1}
+        minZoom={snake?.isCrash === false ? 1 : 0.3}
       >
         <Background />
       </ReactFlow>

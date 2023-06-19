@@ -33,13 +33,12 @@ export type Snake = {
   body: [number, string][];
   path?: number[];
   processed?: number[];
-
   updater: (
     snake: Snake,
     foods: Food[],
     graph: Graph,
     algorithm?: AlgoritmType
-  ) => ReturnType<typeof controll.user> & ReturnType<AlgoritmType>;
+  ) => ReturnType<typeof controll.ai>;
 
   isCrash: boolean;
   id: string;

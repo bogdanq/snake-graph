@@ -47,23 +47,26 @@ export function createTick({
     filter: $state.map(({ gameStatus }) => gameStatus === "RUNING"),
   });
 
+  const triggerRender = guard({
+    clock: $state,
+    filter: $state.map(({ gameStatus }) => gameStatus === "PENDING"),
+  });
+
   sample({
-    clock: [start, triggerTick],
+    clock: merge([start, triggerTick]),
     target: nextTickFx,
   });
 
   $tick.on(nextTickFx.done, (previous) => previous + 1);
 
   sample({ source: $combinedState, clock: nextTickFx }).watch((s) => {
-    // console.time("s");
     runLogic(s);
-    // console.timeEnd("s");
   });
 
   sample({ source: $combinedState, clock: render }).watch(run);
 
   sample({
-    clock: [nextTickFx.done],
+    clock: [triggerRender, nextTickFx.done],
     target: render,
   });
 

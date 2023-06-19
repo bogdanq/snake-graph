@@ -19,7 +19,7 @@ export const useAsixScroll = () => {
   useEffect(() => {
     // положение холста относительно направления
 
-    if (!isCrashed) {
+    if (isCrashed === false) {
       timerId.current = setInterval(() => {
         const viewport = flow.getViewport();
 

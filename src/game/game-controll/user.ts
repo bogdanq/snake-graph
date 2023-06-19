@@ -33,6 +33,8 @@ export const keyboardControl = (
 ): {
   nextPosition: number;
   nextDirection: DIRECTIONS;
+  path: number[];
+  processed: number[];
 } => {
   let { direction } = snake;
 
@@ -69,5 +71,7 @@ export const keyboardControl = (
       checkBounds(getNextPositionByDirection(snake, direction))
     ),
     nextDirection: direction,
+    path: [],
+    processed: [],
   };
 };
